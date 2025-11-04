@@ -1,6 +1,5 @@
 module Main (main) where
 
-import Lib
 import System.Environment
 
 main :: IO ()
@@ -8,7 +7,7 @@ main = do
   cliArgs <- getArgs
   let mFilePath = parseArguments cliArgs
   maybe
-    (printHelpText "Missing filename")
+    (printHelpText "Too few or too many args")
     putStrLn
     mFilePath
 
