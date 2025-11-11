@@ -6,25 +6,6 @@ type NumberedLine = (Maybe Int, String)
 
 type NumberedLines = [NumberedLine]
 
--- | Prefixes every line in order with a number.
--- >>> numberAllLines ["Hello", "", "World"]
--- [(Just 1,"Hello"),(Just 2,""),(Just 3,"World")]
-numberAllLines :: [String] -> NumberedLines
-numberAllLines lines' =
-  let go _ [] = []
-      go counter (x : xs) = (Just counter, x) : go (counter + 1) xs
-   in go 1 lines'
-
-numberLines :: (String -> Bool) -> (String -> Bool) -> [String] -> NumberedLines
-numberLines shouldIncr shouldNumber text =
-  let go :: Int -> [String] -> NumberedLines
-      go _ [] = []
-      go counter (x : xs) =
-        let mNumbering = if shouldNumber x then Just counter else Nothing
-            newCounter = if shouldIncr x then counter + 1 else counter
-         in (mNumbering, x) : go newCounter xs
-   in go 1 text
-
 -- | Checks if a string contains no printable characters.
 -- >>> isEmpty "Test"
 -- >>> isEmpty "    "
@@ -41,3 +22,32 @@ isEmpty str =
 
 isNotEmpty :: String -> Bool
 isNotEmpty str = not (isEmpty str)
+
+-- | Generalized higher-order function for numbering lines.
+numberLines :: (String -> Bool) -> (String -> Bool) -> [String] -> NumberedLines
+numberLines shouldIncrement shouldNumber text =
+  let go :: Int -> [String] -> NumberedLines
+      go _ [] = []
+      go counter (x : xs) =
+        let mNumbering = if shouldNumber x then Just counter else Nothing
+            newCounter = if shouldIncrement x then counter + 1 else counter
+         in (mNumbering, x) : go newCounter xs
+   in go 1 text
+
+-- | Numbers every line.
+-- >>> numberAllLines ["Hello", "", "world", "!"]
+-- [(Just 1,"Hello"),(Just 2,""),(Just 3,"world"),(Just 4,"!")]
+numberAllLines :: [String] -> NumberedLines
+numberAllLines = numberLines (const True) (const True)
+
+-- | Numbers every nonempty line, while incrementing the counter even on empty lines.
+-- >>> numberNonEmptyLines ["Hello", "", "world", "!"]
+-- [(Just 1,"Hello"),(Nothing,""),(Just 3,"world"),(Just 4,"!")]
+numberNonEmptyLines :: [String] -> NumberedLines
+numberNonEmptyLines = numberLines (const True) isNotEmpty
+
+-- | Numbers every nonempty line, only incrementing the counter on empty lines.
+-- >>> numberAndIncrementNonEmptyLines ["Hello", "", "world", "!"]
+-- [(Just 1,"Hello"),(Nothing,""),(Just 2,"world"),(Just 3,"!")]
+numberAndIncrementNonEmptyLines :: [String] -> NumberedLines
+numberAndIncrementNonEmptyLines = numberLines isNotEmpty isNotEmpty
