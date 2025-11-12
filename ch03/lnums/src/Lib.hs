@@ -5,6 +5,10 @@ module Lib
     numberNonEmptyLines,
     numberAndIncrementNonEmptyLines,
     PadMode (..),
+    pad,
+    padLeft,
+    padRight,
+    prettyNumberedLines,
   )
 where
 
@@ -64,4 +68,41 @@ numberAndIncrementNonEmptyLines = numberLines isNotEmpty isNotEmpty
 
 -- * 4.3 - Algebraic data structures as an encoding of possibilities
 
-data PadMode = PadLeft | PadRight
+data PadMode = PadLeft | PadRight | PadCenter
+
+-- | A generalized function to perform either left or right padding.
+-- >>> pad PadLeft 10 "Pad me!"
+-- >>> pad PadRight 10 "Pad me!"
+-- >>> pad PadCenter 15 "Pad me!"
+-- WAS "   Pad me!"
+-- WAS "Pad me!   "
+-- NOW "   Pad me!"
+-- NOW "Pad me!   "
+-- NOW "    Pad me!    "
+pad :: PadMode -> Int -> String -> String
+pad mode n str =
+  case mode of
+    PadLeft -> padding ++ str
+    PadRight -> str ++ padding
+    PadCenter -> centerPadding ++ str ++ centerPadding
+      where
+        centerPadding = replicate (diff `div` 2) ' '
+  where
+    diff = n - length str
+    padding = replicate diff ' '
+
+padLeft :: Int -> String -> String
+padLeft = pad PadLeft
+
+padRight :: Int -> String -> String
+padRight = pad PadRight
+
+-- | Transform numbered lines into human-readable strings.
+prettyNumberedLines :: PadMode -> NumberedLines -> [String]
+prettyNumberedLines mode lineNums =
+  zipWith (\n l -> n ++ " " ++ l) paddedNumbers text
+  where
+    (numbers, text) = unzip lineNums
+    numberStrings = map (maybe "" show) numbers
+    maxLength = maximum (map length numberStrings)
+    paddedNumbers = map (pad mode maxLength) numberStrings
