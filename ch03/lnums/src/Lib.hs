@@ -1,10 +1,20 @@
-module Lib (isEmpty, numberAllLines) where
+module Lib
+  ( isEmpty,
+    numberAllLines,
+    isNotEmpty,
+    numberNonEmptyLines,
+    numberAndIncrementNonEmptyLines,
+    PadMode (..),
+  )
+where
 
 import Data.Char (isPrint, isSeparator)
 
 type NumberedLine = (Maybe Int, String)
 
 type NumberedLines = [NumberedLine]
+
+-- * 4.2 - Parametrized behavior in higher-order functions
 
 -- | Checks if a string contains no printable characters.
 -- >>> isEmpty "Test"
@@ -51,3 +61,7 @@ numberNonEmptyLines = numberLines (const True) isNotEmpty
 -- [(Just 1,"Hello"),(Nothing,""),(Just 2,"world"),(Just 3,"!")]
 numberAndIncrementNonEmptyLines :: [String] -> NumberedLines
 numberAndIncrementNonEmptyLines = numberLines isNotEmpty isNotEmpty
+
+-- * 4.3 - Algebraic data structures as an encoding of possibilities
+
+data PadMode = PadLeft | PadRight
