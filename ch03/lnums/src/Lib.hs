@@ -8,6 +8,7 @@ module Lib
     pad,
     padLeft,
     padRight,
+    prettyNumberedLines,
   )
 where
 
@@ -95,3 +96,13 @@ padLeft = pad PadLeft
 
 padRight :: Int -> String -> String
 padRight = pad PadRight
+
+-- | Transform numbered lines into human-readable strings.
+prettyNumberedLines :: PadMode -> NumberedLines -> [String]
+prettyNumberedLines mode lineNums =
+  zipWith (\n l -> n ++ " " ++ l) paddedNumbers text
+  where
+    (numbers, text) = unzip lineNums
+    numberStrings = map (maybe "" show) numbers
+    maxLength = maximum (map length numberStrings)
+    paddedNumbers = map (pad mode maxLength) numberStrings
