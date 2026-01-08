@@ -1,5 +1,11 @@
 import Data.Maybe
 
+-- Listing 3.1
+main0301 :: IO ()
+main0301 = do
+  line <- getLine
+  putStrLn line
+
 interactiveLines :: Int -> IO ()
 interactiveLines n = do
   line <- getLine
