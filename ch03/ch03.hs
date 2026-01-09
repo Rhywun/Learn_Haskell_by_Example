@@ -1,3 +1,4 @@
+import Data.Char
 import Data.Maybe
 
 -- Listing 3.1
@@ -6,6 +7,7 @@ main0301 = do
   line <- getLine
   putStrLn line
 
+-- Listing 3.2
 interactiveLines :: Int -> IO ()
 interactiveLines n = do
   line <- getLine
@@ -14,6 +16,11 @@ interactiveLines n = do
     else do
       putStrLn (show n ++ ". " ++ line)
       interactiveLines (n + 1)
+
+-- Listing 3.3
+main0303 = do
+  line <- getLine
+  putStrLn (map toUpper line)
 
 -- * Exercise: A safe function for indexing
 
