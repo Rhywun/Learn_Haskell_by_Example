@@ -98,6 +98,8 @@ padRight :: Int -> String -> String
 padRight = pad PadRight
 
 -- | Transform numbered lines into human-readable strings.
+-- >>> prettyNumberedLines PadLeft $ numberAllLines ["Hello", "", "world", "!"]
+-- ["1 Hello","2 ","3 world","4 !"]
 prettyNumberedLines :: PadMode -> NumberedLines -> [String]
 prettyNumberedLines mode lineNums =
   zipWith (\n l -> n ++ " " ++ l) paddedNumbers text
